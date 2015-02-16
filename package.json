@@ -1,0 +1,28 @@
+{
+  "name": "codecrackerbot",
+  "version": "1.0.0",
+  "engines": {
+    "node": "0.12.x"
+  },
+  "description": "A bot to post comments to code cracker builds",
+  "main": "server.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/code-cracker/code-cracker-bot"
+  },
+  "keywords": [
+    "bot",
+    "codecracker",
+    "github",
+    "appveyor"
+  ],
+  "author": "Giovanni Bassi <giggio@giggio.net>",
+  "license": "Apache2",
+  "bugs": {
+    "url": "https://github.com/code-cracker/code-cracker-bot/issues"
+  },
+  "homepage": "https://github.com/code-cracker/code-cracker-bot"
+}
