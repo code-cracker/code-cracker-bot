@@ -6,12 +6,11 @@ if (!apiKey) {
   throw new Error("GITHUB_API_KEY not set");
 }
 
-var makeComment = function(issueNumber, bodyMsg, cb) {
+var makeComment = function(issueNumberOrSha, commentType, bodyMsg, cb) {
   var postData = JSON.stringify({ body: bodyMsg });
   var options = {
     hostname: 'api.github.com',
     port: 443,
-    path: '/repos/code-cracker/code-cracker/issues/' + issueNumber + '/comments',
     method: 'POST',
     headers:  {
       'Authorization': 'token ' + apiKey,
@@ -20,6 +19,11 @@ var makeComment = function(issueNumber, bodyMsg, cb) {
       'User-Agent': 'CodeCracker Bot'
     }
   };
+  if (commentType === 'issue') {
+    options.path = '/repos/code-cracker/code-cracker/issues/' + issueNumberOrSha + '/comments';
+  } else if (commentType === 'commit') {
+    options.path = '/repos/code-cracker/code-cracker/commits/' + issueNumberOrSha + '/comments';
+  }
   var error = "";
   var callbackCalled = false;
   var req = https.request(options, function(res) {
@@ -77,13 +81,20 @@ http.createServer(function (req, res) {
           res.end('Body missing in json.');
           return;
         }
-        if (!parsedBodyMsg.issueNumber) {
+        if (!parsedBodyMsg.issueNumber & !parsedBodyMsg.sha) {
           res.writeHead(500);
-          res.end('Issue number missing in json.');
+          res.end('Issue number and sha missing in json.');
           return;
         }
 
-        makeComment(parsedBodyMsg.issueNumber, parsedBodyMsg.body, function(err){
+        if (parsedBodyMsg.issueNumber) {
+          var commentType = 'issue';
+          var issueNumberOrSha = parsedBodyMsg.issueNumber;
+        } else {
+          var commentType = 'commit';
+          var issueNumberOrSha = parsedBodyMsg.sha;
+        }
+        makeComment(issueNumberOrSha, commentType, parsedBodyMsg.body, function(err){
           if (err) {
             console.log(err);
             res.writeHead(500);
